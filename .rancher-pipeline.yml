@@ -1,0 +1,18 @@
+stages:
+- name: Build
+  steps:
+  - runScriptConfig:
+      image: maven:3.6.0-jdk-8-alpine
+      shellScript: mvn clean package -DskipTests=true
+- name: Publish
+  steps:
+  - publishImageConfig:
+      dockerfilePath: ./Dockerfile
+      buildContext: .
+      tag: wendell/restful-api-demo:${CICD_EXECUTION_SEQUENCE}
+      registry: 127.0.0.1:34834
+- name: Deploy
+  steps:
+  - applyYamlConfig:
+      path: ./deployment.yaml
+timeout: 60
